@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignUp</title>
+    <style>
+        *{ box-sizing: border-box; }
+        html, body{ 
+            margin: 0; 
+            padding: 0;
+            /* background-color: linen; */
+         }
+        .container{
+            margin: 10px 50px;
+        }
+        .form-group{
+            margin: 10px;
+        }
+        input{
+            width: 100%;
+            margin-bottom: 15px;
+            border: solid 1px rgb(0, 0, 0);
+            border-radius: 4px;
+            padding: 15px 10px;
+            box-shadow: 0 4px 8px 0 rgba(243, 239, 8, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.12);
+        }
+        input:hover{
+            border : solid 1px #bebebe;
+        }
+        button{
+            width: 200px;
+            padding: 15px;
+            margin-top: 20px;
+            background: #fff;
+            color: rgb(0, 0, 0);
+            border: solid 1px rgb(0, 0, 0);
+            border-radius: 4px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            transition:  all .38s ease-in-out;
+        }
+        button:hover{
+            background: dodgerblue;
+            color: #fff;
+        }
+        table tr td{
+            border: solid 1px rgb(0, 0, 0);
+            padding: 10px;
+        }
+        h1{
+            color:rgb(252, 207, 6);
+        }
+
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>Sign Up</h1>
+
+        <form role="form" onsubmit="signUp(event);">
+            <div class="form-group">
+                <input type="text" name="fname" id="fname" placeholder="First Name" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name="lname" id="lname" placeholder="Last Name" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name="email" id="email" placeholder="Email Address" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="pwd" id="pwd" placeholder="Password" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name="about" id="about" placeholder="About yourself" required>
+            </div>
+            <div class="form-group">
+                <input type="file" name="photo" id="photo" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Sign Up</button>
+            </div>
+        </form>
+
+        <div id="output">
+            <!-- DISPLAY USERS DATA -->
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        var errors = [];
+
+        const signUp = e => {
+
+            var email = document.getElementById('email').value;
+            var fname = document.getElementById('fname').value;
+            var lname = document.getElementById('lname').value;
+            var pwd = document.getElementById('pwd').value;
+            var about = document.getElementById('about').value;
+            var photo = document.getElementById('photo').value;
+
+            let formData = {
+                email,
+                fname,
+                lname,
+                pwd,
+                about,
+                photo
+            }
+
+            
+
+            if (!email || !fname || !lname || !pwd || !about || !photo) {
+                errors.push({ msg: 'Please enter all fields' });
+            }
+
+            function validateEmail (Email)
+            {
+            let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; 
+            if (Email.match(regexEmail)) {
+                return true; 
+            } else {
+                return false; 
+            }
+            }
+
+            if (!validateEmail(email)) {
+                errors.push({ msg: 'Please enter a correct email' });
+            }
+
+            if (fname.length<2) {
+                errors.push({ msg: 'Length of First Name should be atleast 2 characters' });
+            }
+
+            if (lname.length<2) {
+                errors.push({ msg: 'Length of First Name should be atleast 2 characters' });
+            }
+
+            function validatePassword (Password)
+            {
+            let regexPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+            if (Password.match(regexPass)) {
+                return true; 
+            } else {
+                return false; 
+            }
+            }
+
+            if (!validatePassword(pwd)) {
+                errors.push({ msg: 'Password must be between 8 to 16 characters, must have one uppercase, one lowercase and at least a number and a special character' });
+            }
+
+            if (errors.length == 0) {
+            localStorage.setItem('formData', JSON.stringify(formData));
+            console.log(localStorage.getItem('formData'));
+            dispData();
+            e.preventDefault();
+            }
+            else if (errors.length > 0) {
+                errlog = ''
+                for (const detailsObject of errors) {
+                const errorObject = detailsObject.msg;
+                errlog = errlog + errorObject + '\n';
+                }
+
+                alert('Errors:\n' + errlog);               
+                console.log(errors);
+                e.preventDefault();
+            }
+        }
+
+        function dispData(){
+            // console.log(localStorage.getItem('formData'));
+            let {fname, lname, email, pwd, about, photo} = JSON.parse(localStorage.getItem('formData'));
+            var output = document.getElementById('output');
+            output.innerHTML = `
+            <h2>USER INFO</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>First Name</td>
+                        <td>${fname}</td>
+                    </tr>
+                    <tr>
+                        <td>Last Name</td>
+                        <td>${lname}</td>
+                    </tr>
+                    <tr>
+                        <td>Email Address</td>
+                        <td>${email}</td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td>${pwd}</td>
+                    </tr>
+                    <tr>
+                        <td>About</td>
+                        <td>${about}</td>
+                    </tr>           
+                </tbody>
+            </table>
+           
+            
+            <p> ${photo} </p>
+            `;
+        }
+
+
+    </script>
+</body>
+</html>
